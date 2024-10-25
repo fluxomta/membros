@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  @apply mt-4 mx-1 px-4 py-2 text-white rounded-md;
+}
+
+.success {
+  @apply bg-blue-500 hover:bg-blue-700;
+}
+
+.alert {
+  @apply bg-red-500 hover:bg-red-600;
+}
