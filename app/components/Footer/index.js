@@ -10,7 +10,7 @@ export default function Footer() {
     if (!shouldShowLayout(pathname)) return null;
 
     return (
-        <div className="flex flex-col w-full h-fit bg-[#1f1f1f] text-[#e5e7eb] px-9 py-9">
+        <div className="flex flex-col w-full h-fit bg-secondary-500 text-[#e5e7eb] px-9 py-9">
             <div className="container mx-auto flex flex-row">
                 <div className="flex flex-col gap-2 justify-center w-[35%] w-[35%]">
                     <div className="flex items-center w-full gap-4">

@@ -33,7 +33,6 @@ const handler = NextAuth({
                     throw new Error(data.message || "Credenciais inválidas.");
                 }
 
-                // Log dos dados recebidos
                 console.log("[NextAuth] Dados recebidos:", data);
 
                 return {
@@ -44,13 +43,17 @@ const handler = NextAuth({
                     roles: data.user.registrations[0]?.roles || [],
                     accessToken: data.token,
                     refreshToken: data.refreshToken,
-                    expiresAt: Date.now() + 60 * 60 * 1000, // Token expira em 1 hora
+                    expiresAt: Date.now() + 60 * 60 * 1000,
                 };
             },
         }),
     ],
+    pages: {
+        signIn: "/login",           // Página de login
+        newUser: "/cadastre-se",     // Redirecionamento para novos usuários
+    },
     session: {
-        strategy: "jwt", // Usar JWT para a sessão
+        strategy: "jwt",
         maxAge: 60 * 60, // A sessão expira em 1 hora
     },
     callbacks: {
@@ -58,7 +61,6 @@ const handler = NextAuth({
             console.log("[NextAuth] Callback JWT disparado.");
 
             if (user) {
-                console.log("[NextAuth] Atribuindo dados ao token:", user);
                 token.id = user.id;
                 token.name = user.name;
                 token.email = user.email;
@@ -70,7 +72,6 @@ const handler = NextAuth({
             }
 
             if (trigger === "update" && session?.user) {
-                console.log("[NextAuth] Atualizando token com dados da sessão:", session.user);
                 token.name = session.user.name;
                 token.mobilePhone = session.user.mobilePhone;
             }
@@ -79,7 +80,6 @@ const handler = NextAuth({
         },
         async session({ session, token }) {
             console.log("[NextAuth] Callback Session disparado.");
-            console.log("[NextAuth] Dados do token:", token);
 
             session.user = {
                 id: token.id,
@@ -91,8 +91,6 @@ const handler = NextAuth({
             session.accessToken = token.accessToken;
             session.refreshToken = token.refreshToken;
             session.expiresAt = token.expiresAt;
-
-            console.log("[NextAuth] Sessão final:", session);
 
             return session;
         },

@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+
 import { shouldShowLayout } from "@/utils/routeValidation";
 import useAuth from "@/hooks/useAuth";
 
@@ -13,18 +14,15 @@ import UserInfo from "./UserInfo";
 import Dropdown from "./Dropdown";
 
 export default function Header() {
-    const { session, status } = useAuth();
+    const { session } = useAuth(); // Hook sempre é chamado
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
-    const dropdownRef = useRef(null); // Referência para o dropdown
+    const dropdownRef = useRef(null);
 
-    // Verifica se o layout deve ser mostrado
-    if (!shouldShowLayout(pathname)) return null;
+    const toggleDropdown = () => setIsOpen((prev) => !prev);
+    const closeDropdown = () => setIsOpen(false);
 
-    const toggleDropdown = () => setIsOpen(!isOpen);
-    const closeDropdown = () => setIsOpen(false); // Função para fechar o dropdown
-
-    // Fecha o dropdown ao clicar fora dele
+    // Hook useEffect sempre é executado independentemente de condições
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,6 +35,11 @@ export default function Header() {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+    // Verifica se o layout deve ser mostrado
+    if (!shouldShowLayout(pathname)) {
+        return null; // Retorna null, mas somente após todos os hooks serem executados
+    }
 
     return (
         <header className="bg-primary-500 shadow-md">
