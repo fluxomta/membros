@@ -1,11 +1,15 @@
+// app/conta/edit-profile/page.js
 "use client";
 
-import { useSession, signOut } from "next-auth/react"; // Incluímos signOut como fallback
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import useAuth from "@/hooks/useAuth";
+
+import Notification from "@/components/General/Notification";
 
 export default function EditProfilePage() {
-    const { data: session, status, update } = useSession(); // Adicionando `update` para atualizar a sessão
+    const { session, status, update } = useAuth();
     const router = useRouter();
 
     const [formData, setFormData] = useState({
@@ -14,23 +18,15 @@ export default function EditProfilePage() {
         email: "",
         mobilePhone: "",
     });
-
     const [message, setMessage] = useState("");
+    const [messageType, setMessageType] = useState("success");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Adiciona um log para verificar o que tem na sessão
     useEffect(() => {
-        console.log("[EditProfilePage] Sessão recebida:", session); // Verificar se o userId está presente
-
         if (session?.user) {
-            const { name, email, mobilePhone = "", id } = session.user; // Obtém id do usuário
+            const { name, email, mobilePhone = "" } = session.user;
             const [firstName = "", lastName = ""] = name.split(" ");
-            setFormData({
-                firstName,
-                lastName,
-                email,
-                mobilePhone,
-            });
+            setFormData({ firstName, lastName, email, mobilePhone });
         }
     }, [session]);
 
@@ -39,18 +35,11 @@ export default function EditProfilePage() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const filterEmptyFields = (data) => {
-        return Object.fromEntries(
-            Object.entries(data).filter(([_, value]) => value !== "")
-        );
-    };
-
     const updateUser = async (updatedData) => {
-        // Obtemos o userId diretamente da sessão
         const userId = session?.user?.id;
 
         if (!userId) {
-            console.error("[EditProfilePage] Erro: userId não encontrado na sessão.");
+            console.error("User ID não encontrado.");
             throw new Error("Usuário não autenticado.");
         }
 
@@ -61,7 +50,7 @@ export default function EditProfilePage() {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `${process.env.NEXT_PUBLIC_FUSIONAUTH_AUTH_TOKEN}`,
+                        Authorization: process.env.NEXT_PUBLIC_FUSIONAUTH_AUTH_TOKEN,
                     },
                     body: JSON.stringify({
                         user: updatedData,
@@ -71,18 +60,15 @@ export default function EditProfilePage() {
             );
 
             if (!res.ok) {
-                const errorData = await res.json().catch(() => ({
-                    message: "Erro desconhecido",
-                }));
-                console.error("[EditProfilePage] Erro ao atualizar:", errorData);
+                const errorData = await res.json();
+                console.error("Erro ao atualizar:", errorData);
                 throw new Error(errorData.message || "Erro ao atualizar usuário.");
             }
 
             const data = await res.json();
-            console.log("[EditProfilePage] Usuário atualizado com sucesso:", data);
             return data;
         } catch (error) {
-            console.error("[EditProfilePage] Erro ao atualizar:", error);
+            console.error("Erro ao atualizar:", error);
             throw error;
         }
     };
@@ -93,7 +79,13 @@ export default function EditProfilePage() {
         setIsSubmitting(true);
 
         try {
-            const filteredData = filterEmptyFields(formData);
+            const filteredData = Object.fromEntries(
+                Object.entries(formData).filter(([_, value]) => value)
+            );
+
+            // Adiciona um delay artificial de 2 segundos
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
             const updatedUser = await updateUser(filteredData);
 
             await update({
@@ -105,14 +97,14 @@ export default function EditProfilePage() {
             });
 
             setMessage("Perfil atualizado com sucesso!");
+            setMessageType("success");
         } catch (error) {
             setMessage("Erro ao atualizar perfil. Tente novamente.");
+            setMessageType("error");
         } finally {
             setIsSubmitting(false);
         }
     };
-
-    if (status === "loading") return <p>Carregando...</p>;
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 text-black">
@@ -151,34 +143,29 @@ export default function EditProfilePage() {
                         onChange={handleChange}
                         className="w-full px-4 py-2 border rounded-md"
                     />
-                    {message && (
-                        <p
-                            className={`text-center text-sm mt-2 ${message.includes("sucesso")
-                                ? "text-green-500"
-                                : "text-red-500"
-                                }`}
-                        >
-                            {message}
-                        </p>
-                    )}
                     <button
                         type="submit"
                         disabled={isSubmitting}
                         className={`w-full py-2 rounded-md transition ${isSubmitting
                             ? "bg-blue-300 cursor-not-allowed"
                             : "bg-blue-500 hover:bg-blue-600"
-                            } text-white`}
+                            } text-white flex items-center justify-center`}
                     >
                         {isSubmitting ? "Salvando..." : "Salvar Alterações"}
                     </button>
                 </form>
-                <button
-                    onClick={() => router.push("/conta/profile")}
-                    className="mt-4 w-full bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600 transition"
+                <Link
+                    href="/conta/profile"
+                    className="mt-4 block w-full bg-gray-500 text-white py-2 rounded-md text-center hover:bg-gray-600 transition"
                 >
                     Voltar ao Perfil
-                </button>
+                </Link>
             </div>
+            <Notification
+                message={message}
+                type={messageType}
+                onClose={() => setMessage("")}
+            />
         </div>
     );
 }

@@ -1,15 +1,23 @@
 // app/login/page.js
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+    const { data: session, status } = useSession();
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
+
+    // Redireciona o usuário logado para o dashboard
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.replace("/dashboard");
+        }
+    }, [status, router]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -35,6 +43,7 @@ export default function LoginPage() {
 
         setIsSubmitting(false);
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -64,8 +73,8 @@ export default function LoginPage() {
                         type="submit"
                         disabled={isSubmitting}
                         className={`w-full py-2 rounded-md transition ${isSubmitting
-                                ? "bg-blue-300 cursor-not-allowed"
-                                : "bg-blue-500 hover:bg-blue-600"
+                            ? "bg-blue-300 cursor-not-allowed"
+                            : "bg-blue-500 hover:bg-blue-600"
                             } text-white`}
                     >
                         {isSubmitting ? "Entrando..." : "Entrar"}
