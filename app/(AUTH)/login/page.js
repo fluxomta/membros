@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Notification from "@/components/General/Notification";
 
@@ -14,7 +14,6 @@ export default function LoginPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [notification, setNotification] = useState("");
     const router = useRouter();
-    const searchParams = useSearchParams(); // Para capturar parâmetros da URL
 
     // Verifica se já existe uma sessão ativa
     useEffect(() => {
@@ -22,14 +21,6 @@ export default function LoginPage() {
             router.replace("/dashboard");
         }
     }, [status, router]);
-
-    // Verifica se existe uma mensagem de notificação na URL
-    useEffect(() => {
-        const messageFromURL = searchParams.get("message");
-        if (messageFromURL) {
-            setNotification(messageFromURL);
-        }
-    }, [searchParams]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
