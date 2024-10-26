@@ -1,50 +1,32 @@
-// components/Header/index.js
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
-import { shouldShowLayout } from "@/utils/routeValidation";
 import useAuth from "@/hooks/useAuth";
 
-import Avatar from "./Avatar";
-import UserInfo from "./UserInfo";
-import Dropdown from "./Dropdown";
+import RightSideDrawer from "./RightSideDrawer";
+import Backdrop from "./Backdrop";
+import Icons from "@/components/General/Icons";
 
 export default function Header() {
-    const { session } = useAuth(); // Hook sempre é chamado
-    const [isOpen, setIsOpen] = useState(false);
-    const pathname = usePathname();
-    const dropdownRef = useRef(null);
+    const { session } = useAuth(); // Hook de autenticação
+    const [isRightDrawerOpen, setIsRightDrawerOpen] = useState(false);
 
-    const toggleDropdown = () => setIsOpen((prev) => !prev);
-    const closeDropdown = () => setIsOpen(false);
+    const toggleRightDrawer = () => {
+        setIsRightDrawerOpen((prev) => !prev); // Alterna o estado do drawer
+    };
 
-    // Hook useEffect sempre é executado independentemente de condições
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                closeDropdown();
-            }
-        };
+    const closeDrawer = () => setIsRightDrawerOpen(false); // Fecha o drawer
 
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    // Verifica se o layout deve ser mostrado
-    if (!shouldShowLayout(pathname)) {
-        return null; // Retorna null, mas somente após todos os hooks serem executados
-    }
+    if (!session?.user) return null; // Renderiza apenas se o usuário estiver autenticado
 
     return (
-        <header className="bg-primary-500 shadow-md">
-            <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                <h1 className="text-xl font-bold">
+        <>
+            <header className="bg-primary-500 shadow-md p-4 flex justify-between items-center z-20 fixed w-full h-16">
+
+                {/* Logo */}
+                <h1 className="text-xl font-bold text-white">
                     <Link href="/dashboard">
                         <Image
                             src="/logo-fluxo.webp"
@@ -55,19 +37,26 @@ export default function Header() {
                         />
                     </Link>
                 </h1>
-                {session?.user && (
-                    <div className="relative" ref={dropdownRef}>
-                        <div
-                            onClick={toggleDropdown}
-                            className="flex items-center text-white space-x-3 cursor-pointer bg-primary-600 hover:bg-primary-700 transition-all p-2 rounded-md"
-                        >
-                            <Avatar email={session.user.email} />
-                            <UserInfo user={session.user} />
-                        </div>
-                        <Dropdown user={session.user} isOpen={isOpen} closeDropdown={closeDropdown} />
-                    </div>
-                )}
-            </div>
-        </header>
+
+                {/* Botão para abrir o Right Drawer */}
+                <button
+                    className={`text-white font-bold flex items-center rounded-md p-2 border border-primary-400 
+                    ${isRightDrawerOpen ? "bg-primary-700" : "hover:bg-primary-700"} transition`}
+                    onClick={toggleRightDrawer}
+                >
+                    <Icons.RightDrawer height={24} width={24} className="mr-2" /> Conta
+                </button>
+            </header>
+
+            {/* Backdrop */}
+            <Backdrop isVisible={isRightDrawerOpen} onClick={closeDrawer} />
+
+            {/* RightSideDrawer */}
+            <RightSideDrawer
+                isOpen={isRightDrawerOpen}
+                onClose={closeDrawer}
+                user={session.user}
+            />
+        </>
     );
 }

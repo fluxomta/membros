@@ -16,10 +16,10 @@ const montserrat = Montserrat({
 export default function RootLayout({ children }) {
   return (
     <html lang="pt_BR">
-      <body className={`${montserrat.variable}`}>
+      <body className={`${montserrat.variable} bg-white`}>
         <AuthProvider>
           <Header />
-          <div className="h-screen">
+          <div className="h-lvh">
             {children}
           </div>
           <Footer />

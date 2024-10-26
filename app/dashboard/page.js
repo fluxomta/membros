@@ -18,11 +18,8 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-            <div className="p-8 bg-white rounded-lg shadow-md text-center">
-                <h1 className="text-2xl font-bold">Bem-vindo à Dashboard!</h1>
-                <p>Conteúdo da Dashboard aqui.</p>
-            </div>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Bem-vindo à Dashboard!</h1>
+        </>
     );
 }
