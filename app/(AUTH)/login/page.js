@@ -58,7 +58,7 @@ export default function LoginPage() {
 
             <form
                 onSubmit={handleSubmit}
-                className="flex flex-col bg-white shadow-xl md:p-10 2xl:p-12 3xl:p-14 rounded-md border border-primary-700/50"
+                className="flex flex-col bg-white shadow-xl p-6 md:p-10 2xl:p-12 3xl:p-14 rounded-md border border-primary-700/50"
                 data-bitwarden-watching="1"
             >
                 <div className="pb-2">

@@ -70,56 +70,60 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
-                <h2 className="text-2xl font-bold mb-6 text-center">Cadastre-se</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-md"
-                        required
-                    />
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Senha"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-md"
-                        required
-                    />
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Confirmar Senha"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-md"
-                        required
-                    />
-                    <input
-                        type="text"
-                        name="mobilePhone"
-                        placeholder="Telefone"
-                        value={formData.mobilePhone}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-md"
-                    />
-                    {message && <Notification message={message} />}
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className={`w-full py-2 rounded-md transition ${isSubmitting ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-                            } text-white`}
-                    >
-                        {isSubmitting ? "Cadastrando..." : "Cadastrar"}
-                    </button>
-                </form>
+        <>
+            <div className="text-md pb-2 text-center text-white">
+                Cadastro
             </div>
-        </div>
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col bg-white shadow-xl p-6 md:p-10 2xl:p-12 3xl:p-14 rounded-md border border-primary-700/50"
+                data-bitwarden-watching="1"
+            >
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="mb-2 bg-gray-50 text-gray-600 border focus:border-transparent border-gray-300 sm:text-sm rounded-lg ring ring-transparent focus:ring-1 focus:outline-none focus:ring-gray-400 block w-full p-2.5 rounded-l-lg py-3 px-4"
+                    required
+                />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Senha"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="mb-2 bg-gray-50 text-gray-600 border focus:border-transparent border-gray-300 sm:text-sm rounded-lg ring ring-transparent focus:ring-1 focus:outline-none focus:ring-gray-400 block w-full p-2.5 rounded-l-lg py-3 px-4"
+                    required
+                />
+                <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirmar Senha"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="mb-2 bg-gray-50 text-gray-600 border focus:border-transparent border-gray-300 sm:text-sm rounded-lg ring ring-transparent focus:ring-1 focus:outline-none focus:ring-gray-400 block w-full p-2.5 rounded-l-lg py-3 px-4"
+                    required
+                />
+                <input
+                    type="text"
+                    name="mobilePhone"
+                    placeholder="Telefone"
+                    value={formData.mobilePhone}
+                    onChange={handleChange}
+                    className="mb-2 bg-gray-50 text-gray-600 border focus:border-transparent border-gray-300 sm:text-sm rounded-lg ring ring-transparent focus:ring-1 focus:outline-none focus:ring-gray-400 block w-full p-2.5 rounded-l-lg py-3 px-4"
+                />
+                {message && <Notification message={message} />}
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full text-white bg-primary-500 hover:ring-2 focus:outline-none hover:ring-primary-300 font-medium text-sm px-5 py-2.5 text-center mb-6 rounded-md transition ${isSubmitting ? "cursor-not-allowed" : ""
+                        }`}
+                >
+                    {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+                </button>
+            </form>
+        </>
     );
 }
